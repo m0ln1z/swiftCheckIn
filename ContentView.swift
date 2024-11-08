@@ -7,7 +7,6 @@ struct LoginView: View {
     @State private var isPasswordVisible: Bool = false
     @State private var isLoggingIn: Bool = false
     
-    // Цвет фона для светлой и темной темы
     private var backgroundColor: Color {
         colorScheme == .dark ? Color(red: 28/255, green: 28/255, blue: 30/255) : Color.white
     }

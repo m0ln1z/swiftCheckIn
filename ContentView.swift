@@ -6,13 +6,14 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
     @State private var isLoggingIn: Bool = false
+    @State private var isLoggedIn: Bool = false
     
     private var backgroundColor: Color {
         colorScheme == .dark ? Color(red: 28/255, green: 28/255, blue: 30/255) : Color.white
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 backgroundColor
                     .edgesIgnoringSafeArea(.all)
@@ -82,6 +83,7 @@ struct LoginView: View {
                                 switch result {
                                 case .success:
                                     print("Успешный вход!")
+                                    isLoggedIn = true
                                 case .failure(let error):
                                     print("Ошибка: \(error.localizedDescription)")
                                 }
@@ -108,7 +110,6 @@ struct LoginView: View {
                     
                     Spacer()
                     
-                    
                     HStack {
                         Text("Нет аккаунта?")
                             .foregroundColor(.gray)
@@ -119,13 +120,16 @@ struct LoginView: View {
                         }
                     }
                     .padding(.bottom, 30)
+                    
+                    .navigationDestination(isPresented: $isLoggedIn) {
+                        MainAppView()
+                    }
                 }
                 .padding(.horizontal, 20)
             }
         }
     }
 }
-
 struct RegistrationView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var fullName: String = ""

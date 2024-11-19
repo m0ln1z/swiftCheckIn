@@ -204,14 +204,15 @@ struct RegistrationView: View {
                     }
                 }) {
                     Text("Зарегистрироваться")
-                           .foregroundColor(.white)
-                           .font(.system(size: 18, weight: .bold, design: .rounded))
-                           .frame(maxWidth: .infinity)
-                           .padding()
-                           .background(Color.blue)
-                           .cornerRadius(12)
-                   }
-                   .padding(.top, 20)
+                        .foregroundColor(.white)
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                }
+                .padding(.top, 20)
+
                 
                 Spacer()
             }

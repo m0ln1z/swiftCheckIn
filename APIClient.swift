@@ -1,7 +1,7 @@
 import Foundation
 
 class APIClient {
-    static let baseURL = "http://localhost:3000" // Убедитесь, что это правильный URL
+    static let baseURL = "http://localhost:3000" 
     
     // MARK: - Login
     static func login(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -25,30 +25,30 @@ class APIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
         
-        print("Sending request to \(url)") // Логирование URL
-        print("Request body: \(String(data: jsonData, encoding: .utf8) ?? "")") // Логирование тела запроса
+        print("Sending request to \(url)") 
+        print("Request body: \(String(data: jsonData, encoding: .utf8) ?? "")") 
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("Error: \(error.localizedDescription)") // Логирование ошибки
+                print("Error: \(error.localizedDescription)") 
                 completion(.failure(error))
                 return
             }
             
             if let response = response as? HTTPURLResponse {
-                print("Response status code: \(response.statusCode)") // Логирование статус-кода ответа
+                print("Response status code: \(response.statusCode)") 
             }
             
             if let data = data {
                 let responseString = String(data: data, encoding: .utf8)
-                print("Login Response: \(responseString ?? "")") // Логирование ответа
+                print("Login Response: \(responseString ?? "")") 
                 completion(.success(()))
             }
         }.resume()
     }
     
     // MARK: - Register
-    static func register(username: String, email: String, password: String, roles: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+    static func register(username: String, email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let url = URL(string: "\(baseURL)/auth/register") else {
             completion(.failure(NSError(domain: "Invalid URL", code: 400, userInfo: nil)))
             return
@@ -58,7 +58,6 @@ class APIClient {
             "username": username,
             "email": email,
             "password": password,
-            "roles": roles,
             "createdAt": "2024-11-08T00:00:00.000Z"
         ]
         

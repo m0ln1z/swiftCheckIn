@@ -22,7 +22,7 @@ struct LoginView: View {
                     Image("Satbayev_University-removebg-preview")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 300, height: 300)
+                        .frame(width: 250, height: 250)
                         .clipShape(Circle())
                         .shadow(radius: 10)
                         .padding(.bottom, 5)

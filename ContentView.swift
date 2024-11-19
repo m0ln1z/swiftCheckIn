@@ -12,20 +12,20 @@ struct LoginView: View {
     }
     
     var body: some View {
-            NavigationView {
-                ZStack {
-                    backgroundColor
-                        .edgesIgnoringSafeArea(.all)
-                    
-                    VStack(spacing: 30) {
-                        Spacer()
-                        Image("Satbayev_University-removebg-preview")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 200, height: 200)
-                            .clipShape(Circle())
-                            .shadow(radius: 10)
-                            .padding(.bottom, 5)
+        NavigationView {
+            ZStack {
+                backgroundColor
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack(spacing: 30) {
+                    Spacer()
+                    Image("Satbayev_University-removebg-preview")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200, height: 200)
+                        .clipShape(Circle())
+                        .shadow(radius: 10)
+                        .padding(.bottom, 5)
                     
                     Text("Авторизация")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -49,7 +49,7 @@ struct LoginView: View {
                     
                     VStack(alignment: .leading, spacing: 15) {
                         Text("Пароль")
-                            .foregroundColor(colorScheme == .dark ? .gray : .black)
+                           .foregroundColor(colorScheme == .dark ? .gray : .black)
                             .font(.headline)
                         
                         HStack {
@@ -76,7 +76,18 @@ struct LoginView: View {
                     }
                     
                     Button(action: {
-                       //тут тоже дима для тебя. я хз как твою штуку с моей связать
+                        isLoggingIn = true
+                        APIClient.login(email: email, password: password) { result in
+                            DispatchQueue.main.async {
+                                isLoggingIn = false
+                                switch result {
+                                case .success:
+                                    print("Успешный вход!")
+                                case .failure(let error):
+                                    print("Ошибка: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }) {
                         if isLoggingIn {
                             ProgressView()
@@ -114,6 +125,7 @@ struct LoginView: View {
         }
     }
 }
+
 
 struct RegistrationView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -180,17 +192,26 @@ struct RegistrationView: View {
                 }
                 
                 Button(action: {
-                    // Дима, для тебя думаю вот тут нада
+                    APIClient.register(username: fullName, email: email, password: password, roles: ["student"]) { result in
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success:
+                                print("Регистрация успешна!")
+                            case .failure(let error):
+                                print("Ошибка: \(error.localizedDescription)")
+                            }
+                        }
+                    }
                 }) {
                     Text("Зарегистрироваться")
-                        .foregroundColor(.white)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
-                }
-                .padding(.top, 20)
+                           .foregroundColor(.white)
+                           .font(.system(size: 18, weight: .bold, design: .rounded))
+                           .frame(maxWidth: .infinity)
+                           .padding()
+                           .background(Color.blue)
+                           .cornerRadius(12)
+                   }
+                   .padding(.top, 20)
                 
                 Spacer()
             }
@@ -198,6 +219,7 @@ struct RegistrationView: View {
         }
     }
 }
+
 
 struct ContentView: View {
     var body: some View {

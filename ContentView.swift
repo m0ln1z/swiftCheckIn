@@ -17,21 +17,20 @@ struct LoginView: View {
                 backgroundColor
                     .edgesIgnoringSafeArea(.all)
                 
-                VStack(spacing: 30) {
-                    Spacer()
+                VStack(spacing: 13) {
                     Image("Satbayev_University-removebg-preview")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 200, height: 200)
+                        .frame(width: 300, height: 300)
                         .clipShape(Circle())
                         .shadow(radius: 10)
                         .padding(.bottom, 5)
                     
                     Text("Авторизация")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: 32, weight:  .bold, design: .rounded))
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
-                    VStack(alignment: .leading, spacing: 15) {
+                    VStack(alignment: .leading, spacing: 13) {
                         Text("Email")
                             .foregroundColor(colorScheme == .dark ? .gray : .black)
                             .font(.headline)
@@ -109,6 +108,7 @@ struct LoginView: View {
                     
                     Spacer()
                     
+                    
                     HStack {
                         Text("Нет аккаунта?")
                             .foregroundColor(.gray)
@@ -125,7 +125,6 @@ struct LoginView: View {
         }
     }
 }
-
 
 struct RegistrationView: View {
     @Environment(\.colorScheme) var colorScheme

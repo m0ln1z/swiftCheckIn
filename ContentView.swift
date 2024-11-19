@@ -192,7 +192,7 @@ struct RegistrationView: View {
                 }
                 
                 Button(action: {
-                    APIClient.register(username: fullName, email: email, password: password, roles: ["student"]) { result in
+                    APIClient.register(username: fullName, email: email, password: password) { result in
                         DispatchQueue.main.async {
                             switch result {
                             case .success:

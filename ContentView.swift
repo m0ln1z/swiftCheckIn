@@ -12,16 +12,23 @@ struct LoginView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                backgroundColor
-                    .edgesIgnoringSafeArea(.all)
-                
-                VStack(spacing: 30) {
-                    Spacer()
+            NavigationView {
+                ZStack {
+                    backgroundColor
+                        .edgesIgnoringSafeArea(.all)
+                    
+                    VStack(spacing: 30) {
+                        Spacer()
+                        Image("Satbayev_University-removebg-preview")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 200, height: 200)
+                            .clipShape(Circle())
+                            .shadow(radius: 10)
+                            .padding(.bottom, 5)
                     
                     Text("Авторизация")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     VStack(alignment: .leading, spacing: 15) {

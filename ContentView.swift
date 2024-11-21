@@ -12,6 +12,10 @@ struct LoginView: View {
         colorScheme == .dark ? Color(red: 28/255, green: 28/255, blue: 30/255) : Color.white
     }
     
+    private var logoImageName: String {
+        colorScheme == .dark ? "Group 33" : "Satbayev_University-removebg-preview"
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -19,7 +23,7 @@ struct LoginView: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack(spacing: 13) {
-                    Image("Satbayev_University-removebg-preview")
+                    Image(logoImageName)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 250, height: 250)
@@ -28,7 +32,7 @@ struct LoginView: View {
                         .padding(.bottom, 5)
                     
                     Text("Авторизация")
-                        .font(.system(size: 32, weight:  .bold, design: .rounded))
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                     
                     VStack(alignment: .leading, spacing: 13) {
@@ -49,7 +53,7 @@ struct LoginView: View {
                     
                     VStack(alignment: .leading, spacing: 15) {
                         Text("Пароль")
-                           .foregroundColor(colorScheme == .dark ? .gray : .black)
+                            .foregroundColor(colorScheme == .dark ? .gray : .black)
                             .font(.headline)
                         
                         HStack {
@@ -109,6 +113,7 @@ struct LoginView: View {
                     .padding(.top, 20)
                     
                     Spacer()
+                    
                     
                     HStack {
                         Text("Нет аккаунта?")

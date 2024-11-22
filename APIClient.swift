@@ -1,10 +1,10 @@
 import Foundation
 
 class APIClient {
-    static let baseURL = "http://localhost:3000" 
+    static let baseURL = "http://localhost:3000"
     
     // API: - Login
-    static func login(email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    static func login(email: String, password: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let url = URL(string: "\(baseURL)/auth/login") else {
             completion(.failure(NSError(domain: "Invalid URL", code: 400, userInfo: nil)))
             return
@@ -25,30 +25,33 @@ class APIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
         
-        print("Sending request to \(url)") 
-        print("Request body: \(String(data: jsonData, encoding: .utf8) ?? "")") 
-        
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("Error: \(error.localizedDescription)") 
                 completion(.failure(error))
                 return
             }
             
-            if let response = response as? HTTPURLResponse {
-                print("Response status code: \(response.statusCode)") 
+            guard let data = data else {
+                completion(.failure(NSError(domain: "No data received", code: 500, userInfo: nil)))
+                return
             }
             
-            if let data = data {
-                let responseString = String(data: data, encoding: .utf8)
-                print("Login Response: \(responseString ?? "")") 
-                completion(.success(()))
+            do {
+                if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let accessToken = jsonResponse["access_token"] as? String {
+                    print("Login successful, token: \(accessToken)")
+                    completion(.success(accessToken))
+                } else {
+                    completion(.failure(NSError(domain: "Invalid response format", code: 500, userInfo: nil)))
+                }
+            } catch {
+                completion(.failure(error))
             }
         }.resume()
     }
     
     // API: - Register
-    static func register(username: String, email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    static func register(username: String, email: String, password: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let url = URL(string: "\(baseURL)/auth/register") else {
             completion(.failure(NSError(domain: "Invalid URL", code: 400, userInfo: nil)))
             return
@@ -71,24 +74,71 @@ class APIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
         
-        print("Sending request to \(url)") 
-        print("Request body: \(String(data: jsonData, encoding: .utf8) ?? "")") 
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(NSError(domain: "No data received", code: 500, userInfo: nil)))
+                return
+            }
+            
+            do {
+                if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let accessToken = jsonResponse["access_token"] as? String {
+                    print("Registration successful, token: \(accessToken)")
+                    completion(.success(accessToken))
+                } else {
+                    completion(.failure(NSError(domain: "Invalid response format", code: 500, userInfo: nil)))
+                }
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
+    }
+    
+    // API: - Profile
+    static func getProfile(authToken: String, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        guard let url = URL(string: "\(baseURL)/auth/profile") else {
+            completion(.failure(NSError(domain: "Invalid URL", code: 400, userInfo: nil)))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization") // Добавляем токен в заголовок
+
+        print("Sending request to \(url)")
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("Error: \(error.localizedDescription)") 
+                print("Error: \(error.localizedDescription)")
                 completion(.failure(error))
                 return
             }
             
             if let response = response as? HTTPURLResponse {
-                print("Response status code: \(response.statusCode)") 
+                print("Response status code: \(response.statusCode)")
             }
             
-            if let data = data {
-                let responseString = String(data: data, encoding: .utf8)
-                print("Register Response: \(responseString ?? "")") 
-                completion(.success(()))
+            guard let data = data else {
+                completion(.failure(NSError(domain: "No data received", code: 500, userInfo: nil)))
+                return
+            }
+            
+            do {
+                if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    print("Profile Response: \(jsonResponse)")
+                    completion(.success(jsonResponse))
+                } else {
+                    completion(.failure(NSError(domain: "Invalid response format", code: 500, userInfo: nil)))
+                }
+            } catch {
+                print("JSON Parsing Error: \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }.resume()
     }

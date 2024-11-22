@@ -7,6 +7,7 @@ struct LoginView: View {
     @State private var isPasswordVisible: Bool = false
     @State private var isLoggingIn: Bool = false
     @State private var isLoggedIn: Bool = false
+    @State private var errorMessage: String? = nil
     
     private var backgroundColor: Color {
         colorScheme == .dark ? Color(red: 28/255, green: 28/255, blue: 30/255) : Color.white
@@ -79,17 +80,27 @@ struct LoginView: View {
                         )
                     }
                     
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom, 10)
+                    }
+                    
                     Button(action: {
                         isLoggingIn = true
+                        errorMessage = nil
+                        
                         APIClient.login(email: email, password: password) { result in
                             DispatchQueue.main.async {
                                 isLoggingIn = false
                                 switch result {
-                                case .success:
-                                    print("Успешный вход!")
+                                case .success(let token):
+                                    print("Успешный вход, токен: \(token)")
                                     isLoggedIn = true
                                 case .failure(let error):
-                                    print("Ошибка: \(error.localizedDescription)")
+                                    errorMessage = "Ошибка: \(error.localizedDescription)"
+                                    print(errorMessage ?? "")
                                 }
                             }
                         }
@@ -114,7 +125,6 @@ struct LoginView: View {
                     
                     Spacer()
                     
-                    
                     HStack {
                         Text("Нет аккаунта?")
                             .foregroundColor(.gray)
@@ -135,11 +145,15 @@ struct LoginView: View {
         }
     }
 }
+
 struct RegistrationView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var fullName: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var isRegistering: Bool = false
+    @State private var registrationSuccessful: Bool = false
+    @State private var errorMessage: String? = nil
     
     private var backgroundColor: Color {
         colorScheme == .dark ? Color(red: 28/255, green: 28/255, blue: 30/255) : Color.white
@@ -199,28 +213,48 @@ struct RegistrationView: View {
                         )
                 }
                 
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 10)
+                }
+                
                 Button(action: {
+                    isRegistering = true
+                    errorMessage = nil
+                    
                     APIClient.register(username: fullName, email: email, password: password) { result in
                         DispatchQueue.main.async {
+                            isRegistering = false
                             switch result {
                             case .success:
+                                registrationSuccessful = true
                                 print("Регистрация успешна!")
                             case .failure(let error):
-                                print("Ошибка: \(error.localizedDescription)")
+                                errorMessage = "Ошибка: \(error.localizedDescription)"
+                                print(errorMessage ?? "")
                             }
                         }
                     }
                 }) {
-                    Text("Зарегистрироваться")
-                        .foregroundColor(.white)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
+                    if isRegistering {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    } else {
+                        Text("Зарегистрироваться")
+                            .foregroundColor(.white)
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(12)
+                    }
                 }
+                .disabled(isRegistering)
                 .padding(.top, 20)
-
                 
                 Spacer()
             }
